@@ -9,54 +9,57 @@
 // Constructor
 PulseOut::PulseOut(uint8_t pin, long duration, uint8_t pulse, bool square )
   {
-      _Pin       = pin;
-      _Duration  = duration;
-      if ( pulse != NULL) _Pulse     = pulse;
-      if (square != NULL) _Square    = square;
+      _pin       = pin;
+      _duration  = duration;
+      if ( pulse != NULL) _pulse     = pulse;
+      if (square != NULL) _square    = square;
 
-      _MustStart = false;
-      _IsActive  = false;
-      _PreviousMillis = 0;
+      _mustStart = false;
+      _isActive  = false;
+      _previousMillis = 0;
   }
 
-// Public methods
-void PulseOut::Begin() {
-      // Initial PIN state according pulse type
-      pinMode(_Pin, OUTPUT);
-      _PinState  = !_Pulse;
-      digitalWrite(_Pin, _PinState);
-}
-
 // Getters
-uint8_t PulseOut::GetPin() { return _Pin ; }
+uint8_t PulseOut::getPin() { return _pin ; }
 
-bool PulseOut::Start(){ 
-  if(!_IsActive)_MustStart = true;
-  return _MustStart;
+// Public methods
+void PulseOut::begin() {
+      // Initial PIN state according pulse type
+      pinMode(_pin, OUTPUT);
+      _pinState  = !_pulse;
+      digitalWrite(_pin, _pinState);
 }
 
-void PulseOut::Update(unsigned long currentMillis)
+bool PulseOut::start(){ 
+  if(!_isActive)_mustStart = true;
+  return _mustStart;
+}
+
+void PulseOut::update(unsigned long currentMillis) {
+  update(&currentMillis);
+}
+void PulseOut::update(unsigned long* pcurrentMillis)
 {
- if (_MustStart) {
-    _PreviousMillis = currentMillis;
-    _PinState = _Pulse;
-    digitalWrite(_Pin, _PinState);
-    _IsActive = true;
-    _MustStart = false;
+ if (_mustStart) {
+    _previousMillis = *pcurrentMillis;
+    _pinState = _pulse;
+    digitalWrite(_pin, _pinState);
+    _isActive = true;
+    _mustStart = false;
  }
- else if (_IsActive) {
-   if ( currentMillis - _PreviousMillis >= _Duration ) {
+ else if (_isActive) {
+   if ( *pcurrentMillis - _previousMillis >= _duration ) {
       // end of a pulse
-      if (!_Square  || (_PinState != _Pulse) ) {
-              _PinState = !_Pulse;
-              digitalWrite(_Pin, _PinState );
-              _IsActive = false;
+      if (!_square  || (_pinState != _pulse) ) {
+              _pinState = !_pulse;
+              digitalWrite(_pin, _pinState );
+              _isActive = false;
       }
       // Generate square if we just ended previous pulse part
       else {
-              _PinState = !_Pulse;
-              digitalWrite(_Pin, _PinState );
-              _PreviousMillis = currentMillis;
+              _pinState = !_pulse;
+              digitalWrite(_pin, _pinState );
+              _previousMillis = *pcurrentMillis;
       }
    }
  }

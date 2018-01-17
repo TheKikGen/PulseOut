@@ -9,69 +9,80 @@
 // Constructor
 PulseOutManager::PulseOutManager() { }
 
+// Getters
+uint8_t PulseOutManager::getCount() {return _pulseCounter;}
+
 // Public methods
 
 // Add a pulse to the manager
-bool PulseOutManager::Add( PulseOut* pulse) {
+bool PulseOutManager::add( PulseOut* pulse) {
   // For fast access, we use the pin as an index for the array
-  if (pulse->GetPin() > PULSEOUT_MAX_PIN-1 ) return false;
+  uint8_t pin = pulse->getPin();
+  
+  if (pin > PULSEOUT_MAX_PIN-1 ) return false;
 
   // Add the pulse only if no pulse already existing on that pin
-  if ( _Pulses[pulse->GetPin()] == NULL ) {    
-    _Pulses[pulse->GetPin()] = pulse;
-    _PulseCounter++;
+  if ( _pulses[pin] == NULL ) {    
+    _pulses[pin] = pulse;
+    _pulseCounter++;
     return true;  
   }
   return false;
 }
 
 // Remove a pulse from the manager
-bool PulseOutManager::Remove( PulseOut* pulse) {
+bool PulseOutManager::remove( PulseOut* pulse) {
   // For fast access, we use the pin as an index for the array
-  if (pulse->GetPin() > PULSEOUT_MAX_PIN-1 ) return false;
-  _Pulses[pulse->GetPin()] = NULL;
-  _PulseCounter--;
+  uint8_t pin = pulse->getPin();
+  
+  if (pin > PULSEOUT_MAX_PIN-1 ) return false;
+  _pulses[pin] = NULL;
+  _pulseCounter--;
   return true;  
 }
 
 // Remove all pulses from the manager
-void PulseOutManager::Clear() {
-  if (_PulseCounter < 1) return;
+void PulseOutManager::clear() {
+  if (_pulseCounter < 1) return;
   for(int i = 0; i < PULSEOUT_MAX_PIN; i++){
-      _Pulses[i] = NULL;
+      _pulses[i] = NULL;
   }
-  _PulseCounter = 0;
+  _pulseCounter = 0;
 }
 
 // Begin method (in the Setup() )
 // Call all Begin methods of pulses recorded
 
-void PulseOutManager::Begin() { 
-  if (_PulseCounter <1 ) return;
+void PulseOutManager::begin() { 
+  if (_pulseCounter <1 ) return;
   // Begin All pulses recorded
   for(int i = 0; i < PULSEOUT_MAX_PIN; i++){
-    if(_Pulses[i] != NULL) _Pulses[i]->Begin();
+    if(_pulses[i] != NULL) _pulses[i]->begin();
   }  
 }
 
 // Start All Pulses at the same time at the next update
-void PulseOutManager::StartAll() { 
-  if (_PulseCounter <1 ) return;
-  _MustStartAll = true;
+void PulseOutManager::startAll() { 
+  if (_pulseCounter <1 ) return;
+  _mustStartAll = true;
 }
 
 // Update all pulses
-void PulseOutManager::Update(unsigned long currentMillis) {
-  if (_PulseCounter <1 ) return;
+void PulseOutManager::update(unsigned long currentMillis) {
+  update(&currentMillis);
+}
+
+void PulseOutManager::update(unsigned long* pcurrentMillis) {
+  if (_pulseCounter <1 ) return;
 
   // Update all pulses recorded
   for(int i = 0; i < PULSEOUT_MAX_PIN; i++){
-    if(_Pulses[i] != NULL) {
-      if (_MustStartAll) { _Pulses[i]->Start(); }
-      _Pulses[i]->Update(currentMillis);
+    if(_pulses[i] != NULL) {
+      if (_mustStartAll) { _pulses[i]->start(); }
+      _pulses[i]->update(pcurrentMillis);
     }
   }
-  if (_MustStartAll) _MustStartAll  = false  ;
+  if (_mustStartAll) _mustStartAll  = false  ;
   
 }
 

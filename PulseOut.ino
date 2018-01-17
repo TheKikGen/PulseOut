@@ -10,18 +10,20 @@ PulseOut MyPulse1(15,15000);
 PulseOut MyPulse2(13,10000,LOW,true);
 PulseOut MyPulse3(16,5000,HIGH,true);
 PulseOut MyPulse4(17,1000,HIGH,true);
-PulseOut MyPulse5(18,1000);
+PulseOut MyPulse5(18,750);
 PulseOut MyPulse6(19,500);
 
 // Declare a pulse manager
-volatile PulseOutManager myPulseManager;
+PulseOutManager myPulseManager;
 
 SIGNAL(TIMER0_COMPA_vect)
 {
   unsigned long currentMillis = millis();
 
   // Let the manager doing stuffs 
-  myPulseManager.Update(currentMillis);
+  //myPulseManager.update(&currentMillis);
+  //myPulseManager.update(currentMillis);
+  myPulseManager.update(millis());
 }
 
 void setup()
@@ -31,36 +33,33 @@ void setup()
  OCR0A = 0xAF;
  TIMSK0 |= _BV(OCIE0A);
 
- Serial.begin(115200);
-
  // Add pulses to the pulse manager
- myPulseManager.Add(&MyPulse0);
- myPulseManager.Add(&MyPulse1);
- myPulseManager.Add(&MyPulse2);
- myPulseManager.Add(&MyPulse3);
- myPulseManager.Add(&MyPulse4);
- myPulseManager.Add(&MyPulse5);
- myPulseManager.Add(&MyPulse6);
- myPulseManager.Begin();
-
- Serial.println("PULSEOUT DEMO LED SHOW");
- Serial.println("======================");
+ myPulseManager.add(&MyPulse0);
+ myPulseManager.add(&MyPulse1);
+ myPulseManager.add(&MyPulse2);
+ myPulseManager.add(&MyPulse3);
+ myPulseManager.add(&MyPulse4);
+ myPulseManager.add(&MyPulse5);
+ myPulseManager.add(&MyPulse6);
+ myPulseManager.begin();
 
  // Start All pulses now !
 
- myPulseManager.StartAll();
+ myPulseManager.startAll();
 
 }
 
 void loop()
 {
-  
+  unsigned long currentMillis = millis();
+  //myPulseManager.Update(millis()); // OK
+  //myPulseManager.Update(&currentMillis); //OK
   // Start starts or restarts a pulse
   // and returns true is the pulse was started at the last call  
   
-  if ( MyPulse4.Start() ) {
-       MyPulse5.Start();
-       MyPulse6.Start();    
+  if ( MyPulse4.start() ) {
+       MyPulse5.start();
+       MyPulse6.start();    
   }
   
 

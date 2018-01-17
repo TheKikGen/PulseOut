@@ -14,18 +14,19 @@ class PulseOutManager
   {
     public:
       PulseOutManager();
-      bool Add(PulseOut* pulse);
-      bool Remove(PulseOut* pulse);
-      void Clear();            
-      void Begin();
-      void StartAll();
-      void Update(unsigned long currentMillis);
-
+      uint8_t getCount();
+      bool add(PulseOut* pulse);
+      bool remove(PulseOut* pulse);
+      void clear();            
+      void begin();
+      void startAll();
+      void update(unsigned long currentMillis);
+      void update(unsigned long* pcurrentMillis);
     private:
       // Class Member Variables
-      PulseOut* _Pulses[PULSEOUT_MAX_PIN];
-      bool      _MustStartAll = false;
-      uint8_t   _PulseCounter=0;       // the # of pulse currently active 
+      PulseOut* _pulses[PULSEOUT_MAX_PIN];
+      bool      _mustStartAll = false;
+      uint8_t   _pulseCounter=0;       // the # of pulse currently active 
   };
 
 #endif

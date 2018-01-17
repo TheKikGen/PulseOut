@@ -12,22 +12,23 @@ class PulseOut
   {
     public:
       PulseOut(uint8_t pin, long duration, uint8_t pulse=NULL, bool square=NULL );
-      void Begin();
-      bool Start();
-      void Update(unsigned long currentMillis);
-      uint8_t GetPin();
+      void begin();
+      bool start();
+      void update(unsigned long currentMillis);
+      void update(unsigned long* pcurrentMillis); // Faster when called by a manager
+      uint8_t getPin();
 
     private:
       // Class Member Variables
-      uint8_t       _Pin;                  // the # of the pulse Arduino digital pin
-      long          _Duration;             // total milliseconds for the pulse
-      uint8_t       _Pulse     = HIGH;     // HIGH or LOW pulse
-      bool          _Square    = false;    // generate a square HIGH LOW (duration * 2)
+      uint8_t       _pin;                  // the # of the pulse Arduino digital pin
+      long          _duration;             // total milliseconds for the pulse
+      uint8_t       _pulse     = HIGH;     // HIGH or LOW pulse
+      bool          _square    = false;    // generate a square HIGH LOW (duration * 2)
 
-      bool          _IsActive;            // True if the pulse is on going
-      bool          _MustStart;           // True if the pulse must be started
-      unsigned long _PreviousMillis;      // will store last time pulse was updated
-      uint8_t       _PinState;            // Hold the current pin state HIGH or LOW
+      bool          _isActive;            // True if the pulse is on going
+      bool          _mustStart;           // True if the pulse must be started
+      unsigned long _previousMillis;      // will store last time pulse was updated
+      uint8_t       _pinState;            // Hold the current pin state HIGH or LOW
   };
 
 #endif
