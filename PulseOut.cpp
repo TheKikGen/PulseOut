@@ -7,13 +7,9 @@
 #include "PulseOut.h"
 
 // Constructor
-PulseOut::PulseOut(uint8_t pin, long duration, uint8_t pulse, bool square )
+PulseOut::PulseOut(uint8_t pin, unsigned long duration, uint8_t pulse, bool square ):
+ _pin(pin),_duration(duration), _pulse(pulse), _square(square) 
   {
-      _pin       = pin;
-      _duration  = duration;
-      if ( pulse != NULL) _pulse     = pulse;
-      if (square != NULL) _square    = square;
-
       _mustStart = false;
       _isActive  = false;
       _previousMillis = 0;
@@ -31,7 +27,8 @@ void PulseOut::begin() {
 }
 
 bool PulseOut::start(){ 
-  if(!_isActive)_mustStart = true;
+  if (_mustStart) return false; // Wait the next update
+  _mustStart = ! _isActive;
   return _mustStart;
 }
 
@@ -40,14 +37,7 @@ void PulseOut::update(unsigned long currentMillis) {
 }
 void PulseOut::update(unsigned long* pcurrentMillis)
 {
- if (_mustStart) {
-    _previousMillis = *pcurrentMillis;
-    _pinState = _pulse;
-    digitalWrite(_pin, _pinState);
-    _isActive = true;
-    _mustStart = false;
- }
- else if (_isActive) {
+  if (_isActive) {
    if ( *pcurrentMillis - _previousMillis >= _duration ) {
       // end of a pulse
       if (!_square  || (_pinState != _pulse) ) {
@@ -62,5 +52,13 @@ void PulseOut::update(unsigned long* pcurrentMillis)
               _previousMillis = *pcurrentMillis;
       }
    }
+ } else 
+ if (_mustStart) {
+    _previousMillis = *pcurrentMillis;
+    _pinState = _pulse;
+    digitalWrite(_pin, _pinState);
+    _isActive = true;
+    _mustStart = false;
  }
+ 
 }

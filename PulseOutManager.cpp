@@ -6,15 +6,23 @@
 #include <Arduino.h>
 #include "PulseOutManager.h"
 
+
 // Constructor
-PulseOutManager::PulseOutManager() { }
+PulseOutManager::PulseOutManager() {  }
 
 // Getters
 uint8_t PulseOutManager::getCount() {return _pulseCounter;}
 
 // Public methods
 
-// Add a pulse to the manager
+// Create & add a pulse to the manager
+PulseOut* PulseOutManager::factory( uint8_t pin, unsigned long duration, uint8_t pulse, bool square ) {
+  // Create & Add the pulse only if no pulse already existing on that pin
+  PulseOut* p = new PulseOut(pin, duration, pulse, square);
+  if ( add(p) ) return p; else  return (PulseOut*)NULL ;
+}
+
+// Add an existing pulse to the manager
 bool PulseOutManager::add( PulseOut* pulse) {
   // For fast access, we use the pin as an index for the array
   uint8_t pin = pulse->getPin();

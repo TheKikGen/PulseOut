@@ -12,9 +12,12 @@
 #define PULSEOUT_MAX_PIN  20 // For 20 pins from 0 to 19
 class PulseOutManager
   {
+    private:
+     
     public:
       PulseOutManager();
       uint8_t getCount();
+      PulseOut* factory( uint8_t pin, unsigned long duration, uint8_t pulse=HIGH, bool square=false );
       bool add(PulseOut* pulse);
       bool remove(PulseOut* pulse);
       void clear();            
@@ -25,8 +28,8 @@ class PulseOutManager
     private:
       // Class Member Variables
       PulseOut* _pulses[PULSEOUT_MAX_PIN];
-      bool      _mustStartAll = false;
-      uint8_t   _pulseCounter=0;       // the # of pulse currently active 
+      bool      _mustStartAll = false ;
+      uint8_t   _pulseCounter = 0     ;       // the # of pulse currently active 
   };
 
 #endif

@@ -5,63 +5,60 @@
 
 // Declare Pulse on Arduino digital pins
 
+PulseOutManager myPulseOutManager;
+
 PulseOut MyPulse0(14,20000);
 PulseOut MyPulse1(15,15000);
 PulseOut MyPulse2(13,10000,LOW,true);
 PulseOut MyPulse3(16,5000,HIGH,true);
-PulseOut MyPulse4(17,1000,HIGH,true);
-PulseOut MyPulse5(18,750);
-PulseOut MyPulse6(19,500);
 
-// Declare a pulse manager
-PulseOutManager myPulseManager;
+// Using the factory
+PulseOut* MyPulse4 = myPulseOutManager.factory(17,1000,HIGH,true);
+PulseOut* MyPulse5 = myPulseOutManager.factory(18,750);
+PulseOut* MyPulse6 = myPulseOutManager.factory(19,500);
 
 SIGNAL(TIMER0_COMPA_vect)
 {
-  unsigned long currentMillis = millis();
-
   // Let the manager doing stuffs 
-  //myPulseManager.update(&currentMillis);
-  //myPulseManager.update(currentMillis);
-  myPulseManager.update(millis());
+
+  myPulseOutManager.update(millis());
 }
 
 void setup()
 {
- // Timer0 is already used for millis() - we'll just interrupt somewhere
- // in the middle and call the "Compare A" function below
+ // Timer0 is already used for millis() 
  OCR0A = 0xAF;
  TIMSK0 |= _BV(OCIE0A);
 
- // Add pulses to the pulse manager
- myPulseManager.add(&MyPulse0);
- myPulseManager.add(&MyPulse1);
- myPulseManager.add(&MyPulse2);
- myPulseManager.add(&MyPulse3);
- myPulseManager.add(&MyPulse4);
- myPulseManager.add(&MyPulse5);
- myPulseManager.add(&MyPulse6);
- myPulseManager.begin();
+ // Add existing pulses to the pulse manager
+ myPulseOutManager.add(&MyPulse0);
+ myPulseOutManager.add(&MyPulse1);
+ myPulseOutManager.add(&MyPulse2);
+ myPulseOutManager.add(&MyPulse3);
+ 
+ myPulseOutManager.begin();
 
  // Start All pulses now !
 
- myPulseManager.startAll();
-
+ myPulseOutManager.startAll();
+Serial.begin(115200);
 }
 
 void loop()
 {
-  unsigned long currentMillis = millis();
-  //myPulseManager.Update(millis()); // OK
-  //myPulseManager.Update(&currentMillis); //OK
-  // Start starts or restarts a pulse
+ 
+  // Start or restarts a pulse
   // and returns true is the pulse was started at the last call  
   
-  if ( MyPulse4.start() ) {
-       MyPulse5.start();
-       MyPulse6.start();    
+  if ( MyPulse3.start() ) {
+        Serial.println("=========== Pulse3 started");
+  }
+
+   if ( MyPulse4->start() ) {
+        Serial.println("=========== Pulse4 started");
   }
   
+
 
   
 }
