@@ -21,6 +21,7 @@ class PulseOut
     private:
       // Class Member Variables
       uint8_t       _pin;                     // the # of the pulse Arduino digital pin
+                                              // if the pin is 0xFF, then act as a timer only
       unsigned long _duration;                // total milliseconds for the pulse
       uint8_t       _pulse          = HIGH;   // HIGH or LOW pulse
       bool          _square         = false;  // generate a square HIGH LOW (duration * 2)

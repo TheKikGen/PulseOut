@@ -8,7 +8,7 @@
 
 // Constructor
 PulseOut::PulseOut(uint8_t pin, unsigned long duration, uint8_t pulse, bool square ):
- _pin(pin),_duration(duration), _pulse(pulse), _square(square) 
+ _pin(pin),_duration(duration), _pulse(pulse), _square(square)
   {
       _mustStart = false;
       _isActive  = false;
@@ -20,13 +20,16 @@ uint8_t PulseOut::getPin() { return _pin ; }
 
 // Public methods
 void PulseOut::begin() {
-      // Initial PIN state according pulse type
-      pinMode(_pin, OUTPUT);
-      _pinState  = !_pulse;
-      digitalWrite(_pin, _pinState);
+  // Check if a timer only
+  if (_pin != 0xFF ) {
+    // Initial PIN state according pulse type
+    pinMode(_pin, OUTPUT);
+    _pinState  = !_pulse;
+    digitalWrite(_pin, _pinState);
+  }
 }
 
-bool PulseOut::start(){ 
+bool PulseOut::start(){
   if (_mustStart) return false; // Wait the next update
   _mustStart = ! _isActive;
   return _mustStart;
@@ -40,6 +43,11 @@ void PulseOut::update(unsigned long* pcurrentMillis)
   if (_isActive) {
    if ( *pcurrentMillis - _previousMillis >= _duration ) {
       // end of a pulse
+
+       // Timer only
+      if ( _pin == 0XFF ) { _isActive = false; return; }
+
+      // Pulse
       if (!_square  || (_pinState != _pulse) ) {
               _pinState = !_pulse;
               digitalWrite(_pin, _pinState );
@@ -51,14 +59,17 @@ void PulseOut::update(unsigned long* pcurrentMillis)
               digitalWrite(_pin, _pinState );
               _previousMillis = *pcurrentMillis;
       }
+
    }
- } else 
+ } else
  if (_mustStart) {
     _previousMillis = *pcurrentMillis;
-    _pinState = _pulse;
-    digitalWrite(_pin, _pinState);
+    if ( _pin != 0XFF ) {
+      _pinState = _pulse;
+      digitalWrite(_pin, _pinState);
+    }
     _isActive = true;
     _mustStart = false;
  }
- 
+
 }
