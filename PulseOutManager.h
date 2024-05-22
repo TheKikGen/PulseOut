@@ -1,7 +1,7 @@
 /**********************************************************************************
   PulseOutManager.  Pulse Generator class.
   Header file.
-  Franck Touanen - Dec 2017.
+  
 ************************************************************************************/
 #ifndef PulseOutManager_h
 #define PulseOutManager_h
