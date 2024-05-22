@@ -1,7 +1,7 @@
 /**********************************************************************************
   PulseOut.  Pulse Generator class.
   Implementation cpp file.
-  Franck Touanen - Dec 2017.
+   Dec 2017.
 ************************************************************************************/
 #include <Arduino.h>
 #include "PulseOut.h"
