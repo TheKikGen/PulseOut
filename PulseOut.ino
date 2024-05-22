@@ -1,5 +1,5 @@
 // PulseOut Demo sketch
-// Franck Touanen - Dec 2017
+//  Dec 2017
 
 #include "PulseOutManager.h"
 
